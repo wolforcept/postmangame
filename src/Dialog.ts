@@ -58,7 +58,7 @@ export class Dialog {
         if (part.options && part.callback && this.revealed >= textLength) {
             this.handleOption(g, part, text, textLength)
         } else {
-            this.handleNormal(text, textLength)
+            this.handleNormal(g, part, text, textLength)
         }
     }
 
@@ -83,7 +83,7 @@ export class Dialog {
         this.goNext()
     }
 
-    handleNormal(text: string, textLength: number) {
+    handleNormal(g: Graphics, part: DialogPart, text: string, textLength: number) {
 
         if (!Input.interactPressed()) return;
 
@@ -91,6 +91,8 @@ export class Dialog {
             this.revealed = textLength;
             return;
         }
+
+        if (part.callback) part.callback(0)
 
         this.goNext()
     }

@@ -6,10 +6,19 @@ export interface Letter {
     houseId: number
 }
 
+export interface Quest {
+    houseId: number
+    text: string
+    locationId: string
+    personImg: string
+    accepted: boolean
+}
+
 export interface Data {
     daysPassed: number
     hasJob: boolean
     playerX: number
     playerY: number
     letters: Letter[]
+    quests: Quest[]
 }

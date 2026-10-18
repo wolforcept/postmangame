@@ -7,7 +7,7 @@ import { Data } from './Data';
 
 type Dir = "up" | "down" | "left" | "right";
 
-const ROW: Record<Dir, number> = {
+const RENDER_ROWS: Record<Dir, number> = {
     down: 0,
     up: 8,
     left: 16,
@@ -19,7 +19,7 @@ export class Player {
 
     movingDir: null | Dir = null;
     facing: Dir = "down";
-    hitbox = new Rect(-4, -4, 8, 8);
+    hitbox = new Rect(-2, 0, 4, 4);
     pos: Vec2
 
     get speed() { return 40; }
@@ -61,7 +61,7 @@ export class Player {
     }
 
     render(g: Graphics): void {
-        const sy = ROW[this.facing];
+        const sy = RENDER_ROWS[this.facing];
 
         let sx = 0;
         if (this.movingDir !== null) {

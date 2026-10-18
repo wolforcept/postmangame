@@ -1,6 +1,6 @@
 import { Graphics, Keys, MigScreen, vec, Vec2 } from 'miglib';
 import { Camera } from './Camera';
-import { Data } from './Data';
+import { Data, Letter, Quest } from './Data';
 import { Dialog } from './Dialog';
 import { Input } from './Input';
 import { Interactible, InteractibleDoor } from './Interactible';
@@ -37,7 +37,7 @@ export class GameScreen implements MigScreen {
 
         for (const { pos, id, nr } of HOUSES) {
             // const x = pos.x * 8, y = pos.y * 8;
-            this.world.add(new InteractibleDoor(id, nr, pos.clone(), () => false, () => this.deliverLetter(id)));
+            this.world.add(new InteractibleDoor(this.data, id, nr, pos.clone(), () => this.deliver(id)));
             // g.renderImage("door_gray2", x, y)
             // const show = nr === 0 || this.DEBUG ? "*" + id : "" + nr;
             // g.renderText(show, x + 9, y + 4, { size: 5, color: WHITE })
@@ -63,6 +63,7 @@ export class GameScreen implements MigScreen {
         if (loaded) return loaded;
         return {
             letters: [],
+            quests: [],
             daysPassed: 0,
             hasJob: false,
             playerX: PLAYER_START.x,
@@ -123,15 +124,33 @@ export class GameScreen implements MigScreen {
         ], () => console.log("test"))
     }
 
-    deliverLetter(id: number) {
-        const letters = [...this.data.letters]
-        for (const { houseId } of letters) {
-            if (houseId === id) {
-                this.data.letters.splice(this.data.letters.findIndex(x => x.houseId === houseId), 1)
-                return this.dialog.showDialogEasy("Letter Delivered!")
-            }
-        }
-        return this.dialog.showDialogEasy("I have nothing to deliver here...")
+    deliver(_id: number) {
+        const id = _id;
+
+        let relevantLetter: Letter | null = null;
+        let relevantQuest: Quest | null = null;
+        for (const letter of this.data.letters)
+            if (letter.houseId === id) relevantLetter = letter;
+        for (const quest of this.data.quests)
+            if (quest.houseId === id) relevantQuest = quest;
+
+        this.dialog.showDialog([
+
+            {
+                skip: () => relevantLetter !== null || relevantQuest !== null,
+                text: () => "I have nothing to deliver here...",
+            },
+            {
+                skip: () => relevantLetter === null,
+                text: () => "Letter Delivered!",
+                callback: () => this.data.letters.splice(this.data.letters.findIndex(x => x.houseId === id), 1)
+            },
+            {
+                skip: () => relevantQuest === null,
+                text: () => relevantQuest?.text ?? "",
+                callback: () => { if (relevantQuest) relevantQuest.accepted = true },
+            },
+        ])
     }
 
     beginDay() {
@@ -145,8 +164,11 @@ export class GameScreen implements MigScreen {
         const questHouseId = random(this.data.letters).houseId;
         const interactible: InteractibleDoor | undefined = this.world.interactibles.find(x => x instanceof InteractibleDoor && x.id === questHouseId) as InteractibleDoor | undefined;
         if (!interactible) return;
-        if (interactible.quest !== null) return;
-        interactible.quest = genQuest()
+        if (interactible.getQuest() !== null) return;
+        const quest = genQuest(this.data);
+        if (quest !== null)
+            this.data.quests.push(quest)
+        console.log(this.data)
     }
 
     onUpdate(g: Graphics): void {

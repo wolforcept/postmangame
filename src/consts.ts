@@ -6,7 +6,8 @@ export const ZOOM = 10;
 export const WHITE = Color.col(255, 255, 255);
 
 // export const PLAYER_START = vec(54, 238).scale(8).addxy(4, 4);
-export const PLAYER_START = vec(23, 227).scale(8);
+// export const PLAYER_START = vec(23, 227).scale(8);
+export const PLAYER_START = vec(37, 239).scale(8);
 
 export var DEBUG = false;
 export function toggleDebug() { DEBUG = !DEBUG }
