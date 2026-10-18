@@ -1,4 +1,4 @@
-import { Color, Graphics, Keys, NinePatchOptions } from 'miglib';
+import { Graphics } from 'miglib';
 import { Input } from './Input';
 import { WHITE, ZOOM } from './consts';
 
@@ -9,10 +9,12 @@ export interface DialogPart {
     callback?: (option: number) => void
 }
 
+const MAX_INTERACT_CD = 160;
+
 export class Dialog {
     charsPerSecond = 30;
 
-    width = 700;
+    width = 800;
     height = 150;
     padding = 24;
 
@@ -41,7 +43,7 @@ export class Dialog {
         this.partIndex = 0;
         this.revealed = 0;
         this.selectedOption = 0;
-        this.interactCooldown = 100;
+        this.interactCooldown = MAX_INTERACT_CD;
         this.lastOptionSelected = null;
         // this.onDone = onDone;
     }
@@ -71,11 +73,11 @@ export class Dialog {
         const mv = Input.move();
         if (mv.x > 0) {
             this.selectedOption = Math.max(0, Math.min(part.options!!.length - 1, this.selectedOption + 1))
-            this.interactCooldown = 100
+            this.interactCooldown = MAX_INTERACT_CD
         }
         if (mv.x < 0) {
             this.selectedOption = Math.max(0, Math.min(part.options!!.length - 1, this.selectedOption - 1))
-            this.interactCooldown = 100
+            this.interactCooldown = MAX_INTERACT_CD
         }
         if (!Input.interactPressed()) return;
         this.lastOptionSelected = this.selectedOption;
@@ -133,13 +135,15 @@ export class Dialog {
 
         if (part.options) {
             // if (part.options && this.revealed >= textLength) {
+            let dx = 0;
             const ox = x + 24;
             const oy = y + h - 8 - this.textSize;
             for (let i = 0; i < part.options.length; i++) {
                 let opt = part.options[i];
                 if (i === this.selectedOption) opt = "[" + opt + "]"
                 else opt = " " + opt + " "
-                g.renderText(opt, ox + i * 100, oy, { size: this.textSize, color: this.textColor })
+                g.renderText(opt, ox + dx, oy, { size: this.textSize, color: this.textColor })
+                dx += 50 + g.textWidth(opt, { size: this.textSize })
             }
         }
     }
@@ -148,7 +152,7 @@ export class Dialog {
         const lines: string[] = [];
         let line = '';
         for (const word of text.split(/(?<=\s)/)) {
-            if (line && g.sketch.textWidth((line + word)) > maxWidth) {
+            if (line && g.textWidth((line + word), { size: this.textSize }) > maxWidth) {
                 lines.push(line);
                 line = '';
             }

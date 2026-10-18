@@ -1,6 +1,26 @@
 {
     "automappingRulesFile": "",
     "commands": [
+        {
+            "arguments": "\"C:\\Repos\\postmangame\\assets\\tilemap\\world.tmx\" \"C:/Repos/postmangame/assets/tilemap/world.png\"",
+            "command": "C:/Program Files/Tiled/tmxrasterizer.exe",
+            "enabled": true,
+            "name": "export",
+            "saveBeforeExecute": true,
+            "shortcut": "F6",
+            "showOutput": true,
+            "workingDirectory": ""
+        },
+        {
+            "arguments": "\"C:\\Repos\\postmangame\\assets\\tilemap\\world.tmx\" \"C:/Repos/postmangame/assets/tilemap/blocking.png\" --ignore-visibility --show-layer blocking --hide-layer objs --hide-layer buildings2 --hide-layer buildings --hide-layer roads2 --hide-layer roads",
+            "command": "C:/Program Files/Tiled/tmxrasterizer.exe",
+            "enabled": true,
+            "name": "export2",
+            "saveBeforeExecute": true,
+            "shortcut": "F7",
+            "showOutput": true,
+            "workingDirectory": ""
+        }
     ],
     "compatibilityVersion": 1100,
     "extensionsPath": "extensions",

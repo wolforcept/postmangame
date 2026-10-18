@@ -33,7 +33,15 @@ export class Menu {
 
         const mv = Input.move();
         this.cursor = this.cursor.add(mv)
+        const min = 30, maxW = 520, maxH = 480;
+        if (this.cursor.x < min) this.cursor.x = min
+        if (this.cursor.y < min) this.cursor.y = min
+        if (this.cursor.x > maxW) this.cursor.x = maxW
+        if (this.cursor.y > maxH) this.cursor.y = maxH
 
+        if (!Input.interactPressed()) return;
+        if (this.currentTab === 'Inventory') this.currentTab = 'Letters'
+        else if (this.currentTab === 'Letters') this.currentTab = 'Inventory'
     }
 
     dd = 2.425;
@@ -44,7 +52,8 @@ export class Menu {
     cutoffW = 50;
     cutoffH = 50;
 
-    hoveredStreet = ""
+    hoveredStreet = "Analog or WASD to move cursor"
+    currentTab: "Letters" | "Inventory" = "Letters"
 
     // asd1 = vec(56, 253).scale(8).addxy(4, 4);
     // asd2 = vec(56, 172).scale(8).addxy(4, 4);
@@ -54,7 +63,7 @@ export class Menu {
             this.cursor = zxc.clone();
             return;
         }
-        this.hoveredStreet = "";
+        this.hoveredStreet = "Analog or WASD to move cursor";
         // if (Keys.justPressed(Keys.KEY_0)) console.log(this.dd, this.xx, this.yy)
         // if (Keys.justPressed(Keys.KEY_1)) this.dd -= .1;
         // if (Keys.justPressed(Keys.KEY_2)) this.dd += .1;
@@ -71,6 +80,15 @@ export class Menu {
 
         this.x = Math.floor(g.width / 2 - this.w / 2);
         this.y = Math.floor(g.height / 2 - this.h / 2);
+
+        ["Letters", "Inventory"].forEach((tab, i) => {
+            const w = 300;
+            const x = this.x + 560 + w * i;
+            const y = this.y - 60 + (this.currentTab === tab ? 0 : 30);
+            g.render9patch("patch", x, y, w, 200, { scale: ZOOM });
+            const tw = g.textWidth(tab, { color: WHITE, size: 30 });
+            g.renderText(tab, x + w / 2 - tw / 2, y + 50, { color: WHITE, size: 30 })
+        })
         g.render9patch("patch", this.x, this.y, this.w, this.h, { scale: ZOOM });
 
         // const img = g.assets.getImage("map1")
@@ -96,7 +114,9 @@ export class Menu {
 
         g.renderText(this.hoveredStreet, this.x + 30, this.y + this.h - 30, { color: WHITE, size: 30 })
 
-        this.renderLetters(g, this.x + 560, this.y + 30);
+        g.renderText("< E or A >", this.x + 810, this.y + 40, { color: WHITE, size: 20 });
+        if (this.currentTab === "Letters") this.renderLetters(g, this.x + 560, this.y + 80);
+        if (this.currentTab === "Inventory") this.renderInventory(g, this.x + 560, this.y + 80);
     }
 
 
@@ -141,15 +161,31 @@ export class Menu {
         g.sketch.rect(this.x + px, this.y + py, ZOOM, ZOOM);
     }
 
+    renderInventory(g: Graphics, x: number, y: number) {
+        const text = "Wallet: " + this.data.money + " $\n\n" + "Items:\n" + this.data.inventory.map(x => " > " + x + "\n").join("");
+        g.renderText(text, x, y, { color: WHITE, size: 30 })
+    }
 
     renderLetters(g: Graphics, x: number, y: number) {
-        const letters = [...this.data.letters];
+
+        if (!this.data.hasJob) return;
+
+        if (this.data.letters.length === 0) {
+            g.renderText("All letters delivered for today.", x, y + 30, { color: WHITE, size: 30 })
+            return
+        }
+
+        const letters = [...this.data.letters].slice(0, 3);
         let dy = 0;
         for (const { houseId, to, from } of letters) {
+            g.renderImage("letter", x - 20, y + dy, { w: 7 * ZOOM, h: 11 * ZOOM })
             const house = HOUSES_BY_ID[houseId]
             const street = STREET_BY_HOUSE[houseId]
-            g.renderText("From: " + from + "\nTo: " + to + "\nat " + street + ", nr " + house.nr, x, y + 30 + dy)
+            g.renderText("From: " + from + "\nTo: " + to + "\nat " + street + ", nr " + house.nr, x + 60, y + 28 + dy, { color: WHITE, size: 30 })
             dy += 140
         }
+        const left = this.data.letters.length - 3
+        if (left > 0)
+            g.renderText("And " + left + " more...", x - 20, y + 28 + dy, { color: WHITE, size: 30 })
     }
 }

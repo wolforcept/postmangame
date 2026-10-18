@@ -22,7 +22,8 @@ export class Player {
     hitbox = new Rect(-2, 0, 4, 4);
     pos: Vec2
 
-    get speed() { return 40; }
+    get speed() { return 100; }
+    // get speed() { return 40; }
 
     constructor(private data: Data) {
         this.pos = vec(data.playerX, data.playerY)

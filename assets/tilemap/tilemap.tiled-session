@@ -1,7 +1,9 @@
 {
-    "activeFile": "",
+    "activeFile": "world.tmx",
     "expandedProjectPaths": [
+        "."
     ],
+    "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "": {
             "scaleInDock": 4
@@ -12,6 +14,10 @@
         "#tilemap_packed": {
             "scaleInEditor": 1
         },
+        "tilemap_packed.tsx": {
+            "scaleInDock": 4,
+            "scaleInEditor": 8
+        },
         "untitled.tmx": {
             "scale": 4,
             "selectedLayer": 0,
@@ -21,11 +27,11 @@
             }
         },
         "world.tmx": {
-            "scale": 0.5,
-            "selectedLayer": 0,
+            "scale": 8,
+            "selectedLayer": 5,
             "viewCenter": {
-                "x": 1521,
-                "y": 2018
+                "x": 494.3125,
+                "y": 1799.25
             }
         },
         "world_2.tmx": {
@@ -37,6 +43,7 @@
             }
         }
     },
+    "last.executablePath": "C:/Program Files/Tiled/tiled.exe",
     "last.imagePath": "C:/Repos/proj1/assets/tilemap",
     "map.fixedSize": true,
     "map.height": 300,
@@ -45,11 +52,14 @@
     "map.tileWidth": 8,
     "map.width": 300,
     "openFiles": [
+        "tilemap_packed.tsx",
+        "world.tmx"
     ],
     "project": "tilemap.tiled-project",
     "recentFiles": [
-        "world_2.tmx",
+        "tilemap_packed.tsx",
         "world.tmx",
+        "world_2.tmx",
         "untitled.tmx"
     ],
     "tileset.embedInMap": false,

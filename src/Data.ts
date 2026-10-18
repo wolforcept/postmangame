@@ -7,11 +7,14 @@ export interface Letter {
 }
 
 export interface Quest {
+    item: string
     houseId: number
     text: string
     locationId: string
     personImg: string
     accepted: boolean
+    completed: boolean
+    reward: number
 }
 
 export interface Data {
@@ -21,4 +24,7 @@ export interface Data {
     playerY: number
     letters: Letter[]
     quests: Quest[]
+    money: number
+    caughtMoney: number[]
+    inventory: string[]
 }

@@ -2,14 +2,12 @@ import { rect, Rect, RectLike, vec, Vec2 } from "miglib";
 
 export interface House {
     id: number
-    nr: number | string
+    nr: number
     pos: Vec2
     residents: string[]
 }
 
 export const HOUSES: House[] = [
-
-
 
     // Plinth Boulevard
     { id: 4, residents: ["Mr. Maximus", "Mrs. Brianna"],                   /**/ nr: 1, pos: vec(44, 237) },
@@ -30,7 +28,7 @@ export const HOUSES: House[] = [
     { id: 22, residents: ["Mrs. Georgia", "Mrs. Samantha"],                /**/ nr: 2, pos: vec(72, 218) },
     { id: 28, residents: ["Mr. Greyson", "Mr. Bruno"],                     /**/ nr: 3, pos: vec(80, 218) },
     { id: 42, residents: ["Miss. Antonia"],                                /**/ nr: 4, pos: vec(102, 218) },
-    { id: 46, residents: ["Miss. Scarlett"],                               /**/ nr: 5, pos: vec(109, 191) },
+    { id: 47, residents: ["Miss. Easton"],                                 /**/ nr: 5, pos: vec(110, 218) },
     { id: 52, residents: ["Miss. Emery", "Mr. Kamrin"],                    /**/ nr: 6, pos: vec(114, 218) },
     { id: 59, residents: ["Mr. Saul"],                                     /**/ nr: 7, pos: vec(122, 218) },
     { id: 65, residents: ["Mr. Clyde"],                                    /**/ nr: 8, pos: vec(131, 218) },
@@ -63,25 +61,24 @@ export const HOUSES: House[] = [
     { id: 23, residents: ["Miss. Avery", "Mr. Derek"],                     /**/ nr: 3, pos: vec(73, 252) },
     { id: 29, residents: ["Miss. Kyra", "Miss. Laura"],                    /**/ nr: 4, pos: vec(81, 252) },
     { id: 34, residents: ["Mr. Christian"],                                /**/ nr: 5, pos: vec(89, 252) },
-    { id: 38, residents: ["Mr. Nicholas"],                                 /**/ nr: 6, pos: vec(94, 252) },
-    { id: 41, residents: ["Mrs. Estelle"],                                 /**/ nr: 7, pos: vec(101, 252) },
-    { id: 48, residents: ["Mr. Bellamy", "Mr. Kamrin"],                    /**/ nr: 8, pos: vec(110, 252) },
-    { id: 56, residents: ["Mr. Tristan"],                                  /**/ nr: 9, pos: vec(115, 252) },
+    { id: 38, residents: ["Mr. Nicholas", "Mrs. Estelle"],                 /**/ nr: 6, pos: vec(94, 252) },
+    { id: 48, residents: ["Mr. Bellamy", "Mr. Kamrin"],                    /**/ nr: 7, pos: vec(110, 252) },
+    { id: 56, residents: ["Mr. Tristan"],                                  /**/ nr: 8, pos: vec(115, 252) },
 
-    // "Obson Corner": {
+    // Obson Corner
     { id: 2, residents: ["Mr. Reese"],                                     /**/ nr: 1, pos: vec(43, 177) },
 
     // Lumina Hawk Street
-    { id: 1, residents: ["Mr. Kade"],                                      /**/ nr: 1, pos: vec(36, 191) },
+    { id: 1, residents: ["Mr. Kade", "Mr. Holden", "Mrs. Journey"],        /**/ nr: 1, pos: vec(36, 191) },
     { id: 3, residents: ["Miss. Rebecca", "Miss. Kristen"],                /**/ nr: 2, pos: vec(44, 191) },
-    { id: 7, residents: ["Mr. Grant"],                                     /**/ nr: 3, pos: vec(52, 191) },
-    { id: 16, residents: ["Mr. Woodrow"],                                  /**/ nr: 4, pos: vec(62, 191) },
-    { id: 21, residents: ["Mrs. Tatum"],                                   /**/ nr: 5, pos: vec(68, 191) },
-    { id: 24, residents: ["Mr. Milton", "Mrs. Bryony"],                    /**/ nr: 6, pos: vec(74, 191) },
-    { id: 31, residents: ["Miss. Gracelyn"],                               /**/ nr: 7, pos: vec(83, 191) },
-    { id: 37, residents: ["Mrs. Harlow"],                                  /**/ nr: 8, pos: vec(94, 191) },
-    { id: 39, residents: ["Mr. Turner"],                                   /**/ nr: 9, pos: vec(100, 191) },
-    { id: 45, residents: ["Mr. Royce", "Mr. Stephen"],                     /**/ nr: 10, pos: vec(106, 191) },
+    { id: 16, residents: ["Mr. Woodrow"],                                  /**/ nr: 3, pos: vec(62, 191) },
+    { id: 21, residents: ["Mrs. Tatum"],                                   /**/ nr: 4, pos: vec(68, 191) },
+    { id: 24, residents: ["Mr. Milton", "Mrs. Bryony"],                    /**/ nr: 5, pos: vec(74, 191) },
+    { id: 31, residents: ["Miss. Gracelyn"],                               /**/ nr: 6, pos: vec(83, 191) },
+    { id: 37, residents: ["Mrs. Harlow"],                                  /**/ nr: 7, pos: vec(94, 191) },
+    { id: 39, residents: ["Mr. Turner"],                                   /**/ nr: 8, pos: vec(100, 191) },
+    { id: 45, residents: ["Mr. Royce", "Mr. Stephen"],                     /**/ nr: 9, pos: vec(106, 191) },
+    { id: 46, residents: ["Miss. Scarlett"],                               /**/ nr: 10, pos: vec(109, 191) },
     { id: 54, residents: ["Miss. Marilyn"],                                /**/ nr: 11, pos: vec(115, 191) },
 
     // Typing Street
@@ -93,22 +90,26 @@ export const HOUSES: House[] = [
     { id: 73, residents: ["Mrs. Leila"],                                   /**/ nr: 6, pos: vec(146, 269) },
     { id: 74, residents: ["Miss. Dani", "Mr. Walter"],                     /**/ nr: 7, pos: vec(151, 269) },
 
-    // library alley
-    { id: 57, residents: ["Mr. Holden", "Mrs. Journey"],                   /**/ nr: "library", pos: vec(118, 247) },
-
     // Strime Alley
-    { id: 40, residents: ["Miss. Lainey"],                                 /**/ nr: 0, pos: vec(101, 205) },
-    { id: 44, residents: ["Mr. Jordy", "Mr. Moses"],                       /**/ nr: 0, pos: vec(104, 205) },
-    { id: 49, residents: ["Mrs. Erin"],                                    /**/ nr: 0, pos: vec(111, 205) },
+    { id: 40, residents: ["Miss. Lainey"],                                 /**/ nr: 1, pos: vec(101, 205) },
+    { id: 44, residents: ["Mr. Jordy", "Mr. Moses"],                       /**/ nr: 2, pos: vec(104, 205) },
+    { id: 49, residents: ["Mrs. Erin"],                                    /**/ nr: 3, pos: vec(111, 205) },
 
     // King Street
-    { id: 5, residents: ["Miss. Lennox", "Mrs. Regina"],                   /**/ nr: 1, pos: vec(51, 218) },
-    { id: 8, residents: ["Mr. Alton"],                                     /**/ nr: 2, pos: vec(52, 226) },
-    { id: 15, residents: ["Miss. Kyra"],                                   /**/ nr: 3, pos: vec(59, 228) },
+    { id: 41, residents: ["Mr. Jean"],                                     /**/ nr: 1, pos: vec(52, 203) },
+    { id: 5, residents: ["Miss. Lennox", "Mrs. Regina"],                   /**/ nr: 2, pos: vec(51, 218) },
+    { id: 8, residents: ["Mr. Alton"],                                     /**/ nr: 3, pos: vec(48, 226) },
+    { id: 15, residents: ["Miss. Kyra"],                                   /**/ nr: 4, pos: vec(59, 228) },
+    { id: 7, residents: ["Mr. Juni"],                                      /**/ nr: 5, pos: vec(52, 229) },
+
+    // beverley street
+    { id: 57, residents: ["Miss. Julie"],                                  /**/ nr: 1, pos: vec(74, 205) },
+    { id: 90, residents: ["Mr. Juliann"],                                  /**/ nr: 2, pos: vec(78, 205) },
+    { id: 89, residents: ["Mr. Michael"],                                  /**/ nr: 3, pos: vec(81, 207) },
+
 
     // other?
     { id: 35, residents: ["Mr. Kade", "Mr. Vincent"],                      /**/ nr: 0, pos: vec(90, 228) },
-    { id: 47, residents: ["Miss. Easton"],                                 /**/ nr: 0, pos: vec(110, 218) },
     { id: 51, residents: ["Miss. Jolie"],                                  /**/ nr: 0, pos: vec(114, 168) },
     { id: 53, residents: ["Mr. Boden", "Mr. Philip"],                      /**/ nr: 0, pos: vec(115, 175) },
     { id: 58, residents: ["Mr. Bruno"],                                    /**/ nr: 0, pos: vec(121, 210) },
@@ -127,6 +128,32 @@ export const HOUSES: House[] = [
     { id: 87, residents: ["Mr. Kamden", "Mrs. Talia"],                     /**/ nr: 8, pos: vec(256, 102) },
     { id: 88, residents: ["Miss Willa"],                                   /**/ nr: 9, pos: vec(257, 94) },
 ];
+
+function checkIds(items: { id: number }[]): void {
+    const counts = new Map<number, number>();
+    for (const { id } of items) {
+        counts.set(id, (counts.get(id) ?? 0) + 1);
+    }
+
+    const ids = [...counts.keys()];
+    const min = Math.min(...ids);
+    const max = Math.max(...ids);
+
+    const missing: number[] = [];
+    for (let id = min; id <= max; id++) {
+        if (!counts.has(id)) missing.push(id);
+    }
+
+    const duplicated = [...counts.entries()]
+        .filter(([, n]) => n > 1)
+        .map(([id, n]) => `${id} (x${n})`);
+
+    console.log(`IDs from ${min} to ${max}`);
+    console.log('Missing:', missing.length ? missing.join(', ') : 'none');
+    console.log('Duplicated:', duplicated.length ? duplicated.join(', ') : 'none');
+}
+
+checkIds(HOUSES);
 
 export interface Street {
     difficulty: number | null
@@ -195,6 +222,11 @@ export const STREETS: { [key: string]: Street } = {
         houses: [40, 44, 49]
     },
 
+    "Beverley Alley": {
+        difficulty: 10,
+        houses: [89, 90]
+    },
+
     "Sanley Alley": {
         difficulty: 10,
         houses: [35]
@@ -239,8 +271,8 @@ export const STREETS_RECTS: StreetRect[] = [
 
     { name: "Newache Road", rects: [rect(39, 32, 1, 26)] },
     { name: "Oldache Road", rects: [rect(52, 52, 1, 26)] },
-    { name: "5", rects: [rect(21, 47, 6, 1), rect(21, 43, 1, 4)] },
-    { name: "6", rects: [rect(32, 47, 6, 1), rect(32, 48, 1, 3)] },
+    { name: "Beverley Alley", rects: [rect(21, 47, 6, 1), rect(21, 43, 1, 4)] },
+    { name: "Strime Alley", rects: [rect(32, 47, 6, 1), rect(32, 48, 1, 3)] },
     { name: "Sanley Alley", rects: [rect(30, 54, 1, 3)] },
     { name: "Peach Alley", rects: [rect(33, 54, 1, 3)] },
     { name: "Longlows Alley", rects: [rect(36, 54, 1, 3)] },
