@@ -1,0 +1,63 @@
+{
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "": {
+            "scaleInDock": 4
+        },
+        "#tilemap": {
+            "scaleInEditor": 1
+        },
+        "#tilemap_packed": {
+            "scaleInEditor": 1
+        },
+        "untitled.tmx": {
+            "scale": 4,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": -132.25,
+                "y": 225
+            }
+        },
+        "world.tmx": {
+            "scale": 0.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1521,
+                "y": 2018
+            }
+        },
+        "world_2.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 403.33333333333337,
+                "y": 371.99999999999994
+            }
+        }
+    },
+    "last.imagePath": "C:/Repos/proj1/assets/tilemap",
+    "map.fixedSize": true,
+    "map.height": 300,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 8,
+    "map.tileWidth": 8,
+    "map.width": 300,
+    "openFiles": [
+    ],
+    "project": "tilemap.tiled-project",
+    "recentFiles": [
+        "world_2.tmx",
+        "world.tmx",
+        "untitled.tmx"
+    ],
+    "tileset.embedInMap": false,
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.margin": 0,
+    "tileset.spacing": 0,
+    "tileset.tileSize": {
+        "height": 8,
+        "width": 8
+    }
+}

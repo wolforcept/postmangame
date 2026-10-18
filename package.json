@@ -1,0 +1,28 @@
+{
+    "name": "miglib-test-project",
+    "version": "1.0.0",
+    "description": "Standalone starter/test project for the miglib library.",
+    "private": true,
+    "scripts": {
+        "dev": "esbuild src/main.ts --bundle --outfile=dist/bundle.js --format=iife --sourcemap --servedir=.",
+        "build": "esbuild src/main.ts --bundle --outfile=dist/bundle.js --format=iife --sourcemap",
+        "watch": "esbuild src/main.ts --bundle --outfile=dist/bundle.js --format=iife --sourcemap --watch",
+        "collisions": "node tools/collisions.mjs",
+        "blocking": "node tools/generate_blocking.mjs"
+    },
+    "dependencies": {
+        "@arvarus/perlin-noise": "^1.0.1",
+        "fast-xml-parser": "^5.11.1",
+        "miglib": "^2.0.8",
+        "p5": "^1.11.0",
+        "pngjs": "^7.0.0"
+    },
+    "devDependencies": {
+        "@types/p5": "^1.7.6",
+        "esbuild": "^0.24.0",
+        "typescript": "^5.9.3"
+    },
+    "allowScripts": {
+        "esbuild@0.24.2": true
+    }
+}
