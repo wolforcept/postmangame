@@ -4,20 +4,24 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>miglib test project</title>
+    <base href="/games/thepostman/">
+    <title>The Postman</title>
     <style>
-        html, body {
+        html,
+        body {
             margin: 0;
             padding: 0;
             overflow: hidden;
             background: #1e1e1e;
         }
-        canvas { display: block; }
+
+        canvas {
+            display: block;
+        }
     </style>
 </head>
 
 <body>
-    <!-- The bundle includes p5 and miglib; it mounts a full-window p5 canvas. -->
     <script src="./p5.min.js"></script>
     <script src="./dist/bundle.js"></script>
 </body>
