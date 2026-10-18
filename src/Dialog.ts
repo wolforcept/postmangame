@@ -30,16 +30,21 @@ export class Dialog {
 
     constructor() { }
 
-    get isOpen(): boolean {
+    get hasParts(): boolean {
         return this.partIndex < this.parts.length;
     }
 
-    showDialogEasy(text: string): void {
-        this.showDialog([{ text: () => text }])
+    showEasy(text: string): void {
+        this.show([{ text: () => text }])
     }
 
-    showDialog(parts: DialogPart[], onDone?: () => void): void {
-        this.parts = parts;
+    show(parts: DialogPart[], onDone?: () => void): void {
+        if (this.hasParts) {
+            this.parts.splice(this.partIndex + 1, 0, ...parts);
+            return;
+        }
+
+        this.parts = [...parts];
         this.partIndex = 0;
         this.revealed = 0;
         this.selectedOption = 0;
@@ -49,12 +54,12 @@ export class Dialog {
     }
 
     private skipParts(): void {
-        while (this.isOpen && this.parts[this.partIndex].skip?.()) this.goNext();
+        while (this.hasParts && this.parts[this.partIndex].skip?.()) this.goNext();
     }
 
     update(g: Graphics, dt: number): void {
         this.skipParts();
-        if (!this.isOpen) return;
+        if (!this.hasParts) return;
 
         const part = this.parts[this.partIndex];
         const text = part.text();
@@ -107,7 +112,7 @@ export class Dialog {
     goNext() {
         this.partIndex++;
         this.revealed = 0;
-        if (!this.isOpen) {
+        if (!this.hasParts) {
             // const onDone = this.onDone;
             // this.onDone = undefined;
             // onDone?.();
@@ -116,7 +121,7 @@ export class Dialog {
 
     render(g: Graphics): void {
         this.skipParts();
-        if (!this.isOpen) return;
+        if (!this.hasParts) return;
 
         const part = this.parts[this.partIndex];
 

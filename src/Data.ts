@@ -13,7 +13,6 @@ export interface Quest {
     locationId: string
     personImg: string
     accepted: boolean
-    completed: boolean
     reward: number
 }
 
@@ -27,4 +26,5 @@ export interface Data {
     money: number
     caughtMoney: number[]
     inventory: string[]
+    upgrades: string[]
 }

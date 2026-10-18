@@ -19,7 +19,7 @@ export const HOUSES: House[] = [
     { id: 26, residents: ["Mr. Cecil"],                                    /**/ nr: 7, pos: vec(78, 237) },
     { id: 30, residents: ["Miss. Isla", "Mrs. Parker"],                    /**/ nr: 8, pos: vec(82, 237) },
     { id: 33, residents: ["Mr. Tyree"],                                    /**/ nr: 9, pos: vec(86, 237) },
-    { id: 43, residents: ["Miss. Madison"],                                /**/ nr: 10, pos: vec(102, 237) },
+    { id: 43, residents: ["Miss. Madison"],                                /**/ nr: 10, pos: vec(104, 237) },
     { id: 50, residents: ["Miss. Everley", "Mrs. Lennox"],                 /**/ nr: 11, pos: vec(111, 237) },
     { id: 55, residents: ["Mr. Bodhi"],                                    /**/ nr: 12, pos: vec(115, 237) },
 
@@ -107,9 +107,10 @@ export const HOUSES: House[] = [
     { id: 90, residents: ["Mr. Juliann"],                                  /**/ nr: 2, pos: vec(78, 205) },
     { id: 89, residents: ["Mr. Michael"],                                  /**/ nr: 3, pos: vec(81, 207) },
 
+    // sanley alley
+    { id: 35, residents: ["Mr. Kade", "Mr. Vincent"],                      /**/ nr: 1, pos: vec(90, 228) },
 
     // other?
-    { id: 35, residents: ["Mr. Kade", "Mr. Vincent"],                      /**/ nr: 0, pos: vec(90, 228) },
     { id: 51, residents: ["Miss. Jolie"],                                  /**/ nr: 0, pos: vec(114, 168) },
     { id: 53, residents: ["Mr. Boden", "Mr. Philip"],                      /**/ nr: 0, pos: vec(115, 175) },
     { id: 58, residents: ["Mr. Bruno"],                                    /**/ nr: 0, pos: vec(121, 210) },
@@ -260,7 +261,7 @@ export interface StreetRect {
 
 export const STREETS_RECTS: StreetRect[] = [
     { name: "Studio Street", rects: [rect(18, 36, 12, 1), rect(18, 37, 1, 5)] },
-    { name: "Lumina Hawk Streen", rects: [rect(9, 42, 31, 1)] },
+    { name: "Lumina Hawk Street", rects: [rect(9, 42, 31, 1)] },
     { name: "Vivid Street", rects: [rect(18, 51, 35, 1)] },
     { name: "Plinth Boulevard", rects: [rect(11, 57, 29, 1)] },
     { name: "Last Flurry Ave", rects: [rect(18, 62, 22, 1)] },

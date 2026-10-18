@@ -1,8 +1,6 @@
 import { Graphics, vec, Vec2 } from 'miglib';
 import { DEBUG, WHITE } from './consts';
 import { Data, Quest } from './Data';
-import { Dialog } from './Dialog';
-import { REQUESTS_BY_SHOP } from './Quest';
 
 export class Interactible {
 
@@ -37,37 +35,29 @@ export class Interactible {
 export class InteractibleShop extends Interactible {
 
     constructor(
-        dialog: Dialog,
-        private data: Data,
         public readonly id: string,
         tilePos: Vec2,
+        onInteract: (self: InteractibleShop) => void,
     ) {
-        super("door_gray2", tilePos, () => false, () => {
+        super("door_gray2", tilePos, () => false, (self) => onInteract(self as any as InteractibleShop))
+    }
 
-            const req = REQUESTS_BY_SHOP[id];
+    override render(g: Graphics, pos: Vec2, isPlayerNearby: boolean): void {
+        super.render(g, pos, isPlayerNearby);
+        const pos2 = vec(-g.textWidth(this.id, { size: 5 }) / 2, -5);
+        g.renderText(this.id, pos.x + pos2.x, pos.y + pos2.y, { size: 5, color: WHITE })
+    }
+}
 
-            dialog.showDialog([{
-                text: () => "What would you like to purchase?",
-                options: ["cancel", ...req.map(item => {
-                    return item.itemName + " " + item.price + "$"
-                })],
-                callback: (_opt) => {
-                    if (_opt === 0) return;
-                    const opt = req[_opt - 1];
-                    if (this.data.money >= opt.price) {
-                        this.data.money -= opt.price
-                        this.data.inventory.push(opt.itemName)
-                        dialog.lastOptionSelected = 1
-                    } else {
-                        dialog.lastOptionSelected = 2
-                    }
-                }
-            }, {
-                skip: () => dialog.lastOptionSelected !== 2,
-                text: () => "Not enough money."
-            }])
+export class InteractibleUpgrader extends Interactible {
 
-        })
+    constructor(
+        public readonly id: string,
+        img: string,
+        tilePos: Vec2,
+        onInteract: (self: InteractibleShop) => void,
+    ) {
+        super(img, tilePos, () => false, (self) => onInteract(self as any as InteractibleShop))
     }
 
     override render(g: Graphics, pos: Vec2, isPlayerNearby: boolean): void {

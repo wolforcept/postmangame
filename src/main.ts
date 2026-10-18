@@ -9,6 +9,7 @@ const game = new Starter((assets: Assets) => {
     assets.loadImage("world", "tilemap/world.png");
 
     [
+        "car",
         "letter",
         "map1",
         "player",
@@ -19,6 +20,7 @@ const game = new Starter((assets: Assets) => {
     ].forEach(img => assets.loadImage(img, img + ".png"));
 
     [
+        "person2",
         "money",
         "post_door",
         "door_gray2"

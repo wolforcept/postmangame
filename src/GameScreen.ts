@@ -5,11 +5,11 @@ import { Data, Letter, Quest } from './Data';
 import { Dialog } from './Dialog';
 import { HOUSES } from './houses';
 import { Input } from './Input';
-import { Interactible, InteractibleDoor, InteractibleShop } from './Interactible';
+import { Interactible, InteractibleDoor, InteractibleShop, InteractibleUpgrader } from './Interactible';
 import { LetterGen } from './LetterGen';
 import { Menu } from './Menu';
 import { Player } from './Player';
-import { genQuest } from './Quest';
+import { genQuest, REQUESTS_BY_SHOP } from './Quest';
 import { World } from './World';
 
 const moneyss = [
@@ -45,11 +45,13 @@ export class GameScreen implements MigScreen {
         this.world.init(g);
 
         this.world.add(new Interactible("door_gray2", vec(39, 237), () => !this.data.hasJob, () => this.onPostDoor()));
-        this.world.add(new InteractibleShop(this.dialog, this.data, "Toy Shop", vec(102, 252)));
-        this.world.add(new InteractibleShop(this.dialog, this.data, "Library", vec(118, 247)));
-        this.world.add(new InteractibleShop(this.dialog, this.data, "Hardware store", vec(49, 191)));
-        this.world.add(new InteractibleShop(this.dialog, this.data, "Bakery", vec(86, 179)));
-        this.world.add(new InteractibleShop(this.dialog, this.data, "Groceries", vec(68, 205)));
+        this.world.add(new InteractibleShop("Toy Shop", vec(102, 252), (self) => this.onShop(self.id)));
+        this.world.add(new InteractibleShop("Library", vec(118, 247), (self) => this.onShop(self.id)));
+        this.world.add(new InteractibleShop("Hardware store", vec(49, 191), (self) => this.onShop(self.id)));
+        this.world.add(new InteractibleShop("Bakery", vec(86, 179), (self) => this.onShop(self.id)));
+        this.world.add(new InteractibleShop("Groceries", vec(68, 205), (self) => this.onShop(self.id)));
+
+        this.world.add(new InteractibleUpgrader("Used Cars", "person2", vec(79, 198), (self) => this.onUpgrader(self.id)));
 
 
         for (const { id, amount, pos } of moneyss) {
@@ -58,9 +60,9 @@ export class GameScreen implements MigScreen {
                     this.data.caughtMoney.push(id)
                     console.log(this.data.caughtMoney.length, moneyss.length)
                     if (this.data.caughtMoney.length < moneyss.length)
-                        this.dialog.showDialogEasy("Found " + amount + "$")
+                        this.dialog.showEasy("Found " + amount + "$")
                     else
-                        this.dialog.showDialog([{ text: () => "Found " + amount + "$" }, { text: () => "Achievement! I collected all the scattered money!" }])
+                        this.dialog.show([{ text: () => "Found " + amount + "$" }, { text: () => "Achievement! I collected all the scattered money!" }])
                     this.data.money += amount;
                     const inter: number = this.world.interactibles.findIndex(x => x === self);
                     this.world.interactibles.splice(inter, 1)
@@ -100,6 +102,7 @@ export class GameScreen implements MigScreen {
             hasJob: false,
             playerX: PLAYER_START.x,
             playerY: PLAYER_START.y,
+            upgrades: [],
         }
     }
 
@@ -117,8 +120,62 @@ export class GameScreen implements MigScreen {
         }
     }
 
+    onShop(id: string) {
+        const dialog = this.dialog;
+        const req = REQUESTS_BY_SHOP[id];
+
+        dialog.show([{
+            text: () => "What would you like to purchase?",
+            options: ["cancel", ...req.map(item => {
+                return item.itemName + " " + item.price + "$"
+            })],
+            callback: (_opt) => {
+                if (_opt === 0) return;
+                const opt = req[_opt - 1];
+                if (this.data.money >= opt.price) {
+                    this.data.money -= opt.price
+                    this.data.inventory.push(opt.itemName)
+                    dialog.showEasy("You purchased " + opt.preposition + " " + opt.itemName + " for " + opt.price + "$.")
+                } else {
+                    dialog.showEasy("Not enough money.")
+                }
+            }
+        }])
+    }
+
+    onUpgrader(id: string) {
+
+        const dialog = this.dialog;
+
+        switch (id) {
+            case "Used Cars": {
+
+                if (this.data.upgrades.includes("car"))
+                    return dialog.showEasy("Only one deal per person!");
+
+                return dialog.show([{
+                    text: () => "Would you like to buy a used car? We have great deals as low as 500$!",
+                    options: ["no", "yes"],
+                    callback: (_opt) => {
+                        if (_opt === 0) return;
+                        if (this.data.money >= 500) {
+                            this.data.money -= 500
+                            this.data.upgrades.push("car")
+                            dialog.showEasy("You purchased a used car for 500$. Press C to drive.")
+                            this.save();
+                        } else {
+                            dialog.showEasy("Not enough money.")
+                        }
+                    }
+                }]);
+            }
+        }
+
+
+    }
+
     onPostDoor() {
-        if (!this.data.hasJob) return this.dialog.showDialog(
+        if (!this.data.hasJob) return this.dialog.show(
             [
                 { text: () => 'There is a job opening!' },
                 { text: () => 'Postman. 25$ a day.' },
@@ -135,7 +192,7 @@ export class GameScreen implements MigScreen {
             () => console.log('Dialog A done'),
         )
 
-        return this.dialog.showDialog([
+        return this.dialog.show([
             {
                 skip: () => !this.hasLetters,
                 text: () => "I have not delivered all letters yet."
@@ -159,45 +216,49 @@ export class GameScreen implements MigScreen {
     deliver(_id: number) {
         const id = _id;
 
-        let relevantLetter: Letter | null = null;
-        let relevantQuest: Quest | null = null;
-        for (const letter of this.data.letters)
-            if (letter.houseId === id) relevantLetter = letter;
-        for (const quest of this.data.quests)
-            if (quest.houseId === id) relevantQuest = quest;
+        let letter: Letter | null = null;
+        let quest: Quest | null = null;
+        for (const _letter of this.data.letters)
+            if (_letter.houseId === id) letter = _letter;
+        for (const _quest of this.data.quests)
+            if (_quest.houseId === id) quest = _quest;
 
-        this.dialog.showDialog([
+        console.log(quest)
+        if (letter === null && quest === null) {
+            this.dialog.showEasy("I have nothing to deliver here...")
+            return;
+        }
 
-            {
-                skip: () => relevantLetter !== null || relevantQuest !== null,
-                text: () => "I have nothing to deliver here...",
-            },
-            {
-                skip: () => relevantLetter === null,
-                text: () => "Letter Delivered!",
-                callback: () => this.data.letters.splice(this.data.letters.findIndex(x => x.houseId === id), 1)
-            },
-            {
-                skip: () => relevantQuest === null,
-                text: () => relevantQuest?.text ?? "",
-                callback: () => {
-                    if (!relevantQuest) return;
-                    if (!relevantQuest.accepted)
-                        relevantQuest.accepted = true;
-                    else {
-                        console.log(this.data.inventory, relevantQuest.item, this.data.inventory.includes(relevantQuest.item))
-                        if (this.data.inventory.includes(relevantQuest.item)) {
-                            this.data.inventory.splice(this.data.inventory.indexOf(relevantQuest.item), 1)
-                            relevantQuest.completed = true;
-                        }
+        if (letter) {
+            this.data.letters.splice(this.data.letters.findIndex(x => x.houseId === id), 1)
+            this.dialog.showEasy("Letter Delivered!");
+        }
+
+        if (quest) {
+
+            if (!quest.accepted) {
+                this.dialog.showEasy(quest.text)
+                quest.accepted = true;
+                return;
+            }
+
+            //already accepted
+            if (this.data.inventory.includes(quest.item)) {
+                this.dialog.show([{
+                    text: () => "Thank you! Please accept this!",
+                }, {
+                    text: () => "*You receive " + quest.reward + "$*",
+                    callback: () => {
+                        this.data.inventory.splice(this.data.inventory.indexOf(quest.item), 1)
+                        this.data.quests.splice(this.data.quests.indexOf(quest), 1)
                     }
-                },
-            },
-            {
-                skip: () => relevantQuest === null || relevantQuest.completed !== true,
-                text: () => "Thank you! Please accept this!\n*You receive " + relevantQuest!!.reward + "$*",
-            },
-        ])
+                }]);
+            } else {
+                this.dialog.showEasy(quest.text)
+            }
+
+        }
+
     }
 
     beginDay() {
@@ -222,7 +283,7 @@ export class GameScreen implements MigScreen {
     onUpdate(g: Graphics): void {
         const dt = Math.min(g.deltaTime / 1000, 0.1);
 
-        if (this.dialog.isOpen) {
+        if (this.dialog.hasParts) {
             this.dialog.update(g, dt);
             this.camera.update(this.player.pos, dt);
             return;

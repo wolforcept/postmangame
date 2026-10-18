@@ -18,11 +18,13 @@ const RENDER_ROWS: Record<Dir, number> = {
 export class Player {
 
     movingDir: null | Dir = null;
+    lastMovingDir: Dir = 'down';
     facing: Dir = "down";
-    hitbox = new Rect(-2, 0, 4, 4);
     pos: Vec2
+    isInCar = false
 
-    get speed() { return 100; }
+    get hitbox() { return this.isInCar ? new Rect(-4, -4, 14, 14) : new Rect(-2, 0, 4, 4) };
+    get speed() { return this.isInCar ? 100 : 40; }
     // get speed() { return 40; }
 
     constructor(private data: Data) {
@@ -30,6 +32,10 @@ export class Player {
     }
 
     update(dt: number, world: World): void {
+        if (Input.car() && this.data.upgrades.includes("car")) {
+            this.isInCar = !this.isInCar;
+        }
+
         const step = Input.move().scale(this.speed * dt);
         this.setDir(step);
 
@@ -48,6 +54,7 @@ export class Player {
         const ax = Math.abs(step.x);
         const ay = Math.abs(step.y);
 
+        if (this.movingDir !== null) this.lastMovingDir = this.movingDir;
         if (ax === 0 && ay === 0) {
             this.movingDir = null;
             return;
@@ -62,6 +69,19 @@ export class Player {
     }
 
     render(g: Graphics): void {
+
+        if (this.isInCar) {
+            g.renderImage("car", this.pos.x - 4, this.pos.y - 4, {
+                w: 14,
+                h: 14,
+                sx: this.lastMovingDir === 'right' || this.lastMovingDir === 'down' ? 14 : 0,
+                sy: this.lastMovingDir === 'up' || this.lastMovingDir === 'down' ? 14 : 0,
+                sw: 14,
+                sh: 14,
+            });
+            return;
+        }
+
         const sy = RENDER_ROWS[this.facing];
 
         let sx = 0;

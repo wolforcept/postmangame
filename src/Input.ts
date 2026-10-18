@@ -5,6 +5,13 @@ const DEADZONE = 0.2;
 
 export class Input {
 
+    static car() {
+        return (
+            Keys.justPressed(Keys.KEY_C) ||
+            Gamepads.wasButtonPressed(PAD, GamepadButton.Y)
+        );
+    }
+
     static move(): Vec2 {
         let x = 0;
         let y = 0;

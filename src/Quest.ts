@@ -88,7 +88,6 @@ export function genQuest(data: Data): Quest | null {
     // } while (houseId === undefined)
 
     return {
-        completed: false,
         item: request.itemName,
         houseId,
         text: ask.replace("<thing>", request.preposition + " " + request.itemName + " from " + request.locationPrefix + request.locationId),
