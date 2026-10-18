@@ -48,7 +48,12 @@ export class Dialog {
         // this.onDone = onDone;
     }
 
+    private skipParts(): void {
+        while (this.isOpen && this.parts[this.partIndex].skip?.()) this.goNext();
+    }
+
     update(g: Graphics, dt: number): void {
+        this.skipParts();
         if (!this.isOpen) return;
 
         const part = this.parts[this.partIndex];
@@ -110,10 +115,10 @@ export class Dialog {
     }
 
     render(g: Graphics): void {
+        this.skipParts();
         if (!this.isOpen) return;
 
         const part = this.parts[this.partIndex];
-        if (part.skip?.()) { this.goNext(); return; }
 
         const w = this.width;
         const h = this.height;
