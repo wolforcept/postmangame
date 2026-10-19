@@ -25,6 +25,7 @@ export interface Data {
     quests: Quest[]
     money: number
     knowledge: number
+    career: number
     learnedToday: boolean
     promotion: number
     caughtMoney: number[]

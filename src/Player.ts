@@ -23,6 +23,8 @@ export class Player {
     pos: Vec2
     isInCar = false
 
+    private lastHitbox: Rect;
+
     get hitbox() { return this.isInCar ? new Rect(-4, -4, 14, 14) : new Rect(-2, 0, 4, 4) };
     get speed() {
         if (this.isInCar) return 150
@@ -35,12 +37,15 @@ export class Player {
 
     constructor(private data: Data) {
         this.pos = vec(data.playerX, data.playerY)
+        this.lastHitbox = this.hitbox;
     }
 
     update(dt: number, world: World): void {
         if (Input.car() && this.data.upgrades.includes("car")) {
             this.isInCar = !this.isInCar;
         }
+
+        this.handleHitboxChange();
 
         const step = Input.move().scale(this.speed * dt);
         this.setDir(step);
@@ -107,6 +112,56 @@ export class Player {
 
     private isBlocking(tx: number, ty: number): boolean {
         return BLOCKING[ty]?.[tx] ?? true;
+    }
+
+    private collidingTiles(x: number, y: number, box: Rect): { wx: number, wy: number }[] {
+        const out: { wx: number, wy: number }[] = [];
+
+        const left = Math.floor((x + box.x) / TILE_SIZE);
+        const right = Math.ceil((x + box.x + box.w) / TILE_SIZE) - 1;
+        const top = Math.floor((y + box.y) / TILE_SIZE);
+        const bottom = Math.ceil((y + box.y + box.h) / TILE_SIZE) - 1;
+
+        for (let ty = top; ty <= bottom; ty++) {
+            for (let tx = left; tx <= right; tx++) {
+                if (!this.isBlocking(tx, ty)) continue;
+
+                const wx = tx * TILE_SIZE;
+                const wy = ty * TILE_SIZE;
+
+                const hit =
+                    x + box.x < wx + TILE_SIZE && x + box.x + box.w > wx &&
+                    y + box.y < wy + TILE_SIZE && y + box.y + box.h > wy;
+                if (hit) out.push({ wx, wy });
+            }
+        }
+        return out;
+    }
+
+    private handleHitboxChange(): void {
+        const box = this.hitbox;
+        const last = this.lastHitbox;
+        if (box.x === last.x && box.y === last.y && box.w === last.w && box.h === last.h) return;
+
+        this.lastHitbox = box;
+        this.pushOutOfWalls(box);
+    }
+
+    private pushOutOfWalls(box: Rect): void {
+        for (const { wx, wy } of this.collidingTiles(this.pos.x, this.pos.y, box)) {
+            const left = this.pos.x + box.x;
+            const top = this.pos.y + box.y;
+
+            const overlapX = Math.min(left + box.w, wx + TILE_SIZE) - Math.max(left, wx);
+            const overlapY = Math.min(top + box.h, wy + TILE_SIZE) - Math.max(top, wy);
+            if (overlapX <= 0 || overlapY <= 0) continue;
+
+            const dirX = left + box.w / 2 < wx + TILE_SIZE / 2 ? -1 : 1;
+            const dirY = top + box.h / 2 < wy + TILE_SIZE / 2 ? -1 : 1;
+
+            if (overlapX < overlapY) this.pos = new Vec2(this.pos.x + dirX * overlapX, this.pos.y);
+            else this.pos = new Vec2(this.pos.x, this.pos.y + dirY * overlapY);
+        }
     }
 
     private moveAxis(dx: number, dy: number, world: World): void {

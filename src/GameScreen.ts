@@ -126,6 +126,7 @@ export class GameScreen implements MigScreen {
         const init = this.makeInit(this.tryLoad());
         return {
             money: init("money", 0),
+            career: init("career", 0),
             knowledge: init("knowledge", 0),
             daysPassed: init("daysPassed", 0),
             playerX: init("playerX", PLAYER_START.x),
@@ -362,11 +363,22 @@ export class GameScreen implements MigScreen {
     }
 
     beginDay() {
-        this.data.money += 25;
         this.data.daysPassed++;
         this.data.letters = this.letterGen.genLetters();
         this.data.learnedToday = false;
         this.addRandomQuest();
+
+        if (this.data.knowledge > 0) {
+            const diff = this.data.knowledge - this.data.career
+            if (diff > 0 && Math.random() < diff * .1) {
+                this.data.career++;
+                const newEarn = 25 + 10 * this.data.career;
+                this.dialog.showEasy("You have been promoted! You will now earn " + newEarn + "$ per day.")
+            }
+        }
+
+        this.data.money += 25 + 10 * this.data.career;
+
         this.save();
     }
 
@@ -415,7 +427,7 @@ export class GameScreen implements MigScreen {
         }
         this.nearest = best;
 
-        if (this.nearest && Input.interactPressed()) {
+        if (!this.player.isInCar && this.nearest && Input.interactPressed()) {
             this.nearest.interact();
         }
     }
@@ -431,7 +443,7 @@ export class GameScreen implements MigScreen {
         this.world.renderBackground(g, this.camera.visibleRect(g));
 
         for (const obj of this.world.interactibles) {
-            obj.render(g, obj.pos, obj === this.nearest);
+            obj.render(g, obj.pos, !this.player.isInCar && obj === this.nearest);
         }
 
         this.player.render(g);
