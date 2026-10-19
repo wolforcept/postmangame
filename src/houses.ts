@@ -170,7 +170,7 @@ export const STREETS: { [key: string]: Street } = {
 
     "King Street": {
         difficulty: 1,
-        houses: [5, 8, 15]
+        houses: [5, 7, 8, 15]
     },
 
     "Vivid Street": {
@@ -180,7 +180,7 @@ export const STREETS: { [key: string]: Street } = {
 
     "Lumina Hawk Street": {
         difficulty: 3,
-        houses: [1, 3, 7, 16, 21, 24, 31, 37, 39, 45, 46, 54]
+        houses: [1, 3, 16, 21, 24, 31, 37, 39, 45, 46, 54]
     },
 
     "Last Flurry Ave": {

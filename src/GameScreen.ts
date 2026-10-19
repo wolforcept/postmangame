@@ -350,8 +350,9 @@ export class GameScreen implements MigScreen {
                 }, {
                     text: () => "*You receive " + quest.reward + "$*",
                     callback: () => {
-                        this.data.inventory.splice(this.data.inventory.indexOf(quest.item), 1)
-                        this.data.quests.splice(this.data.quests.indexOf(quest), 1)
+                        this.data.inventory.splice(this.data.inventory.indexOf(quest.item), 1);
+                        this.data.quests.splice(this.data.quests.indexOf(quest), 1);
+                        this.data.money += quest.reward;
                     }
                 }]);
             } else {

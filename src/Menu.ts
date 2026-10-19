@@ -54,6 +54,7 @@ export class Menu {
 
     hoveredStreet = "Analog or WASD to move cursor"
     currentTab: "Letters" | "Inventory" = "Letters"
+    currentLetterIndex = 0
 
     // asd1 = vec(56, 253).scale(8).addxy(4, 4);
     // asd2 = vec(56, 172).scale(8).addxy(4, 4);
@@ -163,9 +164,12 @@ export class Menu {
 
     renderInventory(g: Graphics, x: number, y: number) {
         const text = "Wallet: " + this.data.money + " $"
-            + "\n\nItems:\n" + this.data.inventory.map(x => " > " + x + "\n").join("")
+            + "\n\nItems:\n" + this.data.inventory.map(x => " > " + x + "\n").join("");
+
+        const text2 = "Daily Pay: " + (25 + 10 * this.data.career) + " $"
             + "\n\nUpgrades:\n" + this.data.upgrades.map(x => " > " + x + "\n").join("");
         g.renderText(text, x, y, { color: WHITE, size: 30 })
+        g.renderText(text2, x + 300, y, { color: WHITE, size: 30 })
     }
 
     renderLetters(g: Graphics, x: number, y: number) {
@@ -177,7 +181,7 @@ export class Menu {
             return
         }
 
-        const letters = [...this.data.letters].slice(0, 3);
+        const letters = [...this.data.letters].slice(this.currentLetterIndex, this.currentLetterIndex + 3);
         let dy = 0;
         for (const { houseId, to, from } of letters) {
             g.renderImage("letter", x - 20, y + dy, { w: 7 * ZOOM, h: 11 * ZOOM })
@@ -189,5 +193,12 @@ export class Menu {
         const left = this.data.letters.length - 3
         if (left > 0)
             g.renderText("And " + left + " more...", x - 20, y + 28 + dy, { color: WHITE, size: 30 })
+
+        if (this.data.letters.length > 3 && Input.car()) {
+            this.currentLetterIndex++
+            console.log(this.currentLetterIndex)
+            if (this.currentLetterIndex >= this.data.letters.length - 3)
+                this.currentLetterIndex = 0
+        }
     }
 }
