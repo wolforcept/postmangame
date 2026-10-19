@@ -24,6 +24,9 @@ export interface Data {
     letters: Letter[]
     quests: Quest[]
     money: number
+    knowledge: number
+    learnedToday: boolean
+    promotion: number
     caughtMoney: number[]
     inventory: string[]
     upgrades: string[]

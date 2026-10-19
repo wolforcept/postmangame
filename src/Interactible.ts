@@ -1,5 +1,5 @@
 import { Graphics, vec, Vec2 } from 'miglib';
-import { DEBUG, WHITE } from './consts';
+import { BLACK as DARK, DEBUG, UpgraderId, WHITE } from './consts';
 import { Data, Quest } from './Data';
 
 export class Interactible {
@@ -24,7 +24,7 @@ export class Interactible {
         const s = g.sketch;
         s.noStroke();
         // s.fill(isPlayerNearby ? 255 : 160, isPlayerNearby ? 220 : 120, 60);
-        g.renderImage("interactibles/" + this.img, pos.x - 4, pos.y - 4);
+        g.renderImage(this.img, pos.x - 4, pos.y - 4);
         if (isPlayerNearby)
             g.renderImage("hovered", pos.x - 5, pos.y - 5);
         if (this.hasQuestMarker())
@@ -39,7 +39,7 @@ export class InteractibleShop extends Interactible {
         tilePos: Vec2,
         onInteract: (self: InteractibleShop) => void,
     ) {
-        super("door_gray2", tilePos, () => false, (self) => onInteract(self as any as InteractibleShop))
+        super("door", tilePos, () => false, (self) => onInteract(self as any as InteractibleShop))
     }
 
     override render(g: Graphics, pos: Vec2, isPlayerNearby: boolean): void {
@@ -52,17 +52,18 @@ export class InteractibleShop extends Interactible {
 export class InteractibleUpgrader extends Interactible {
 
     constructor(
-        public readonly id: string,
+        public readonly id: UpgraderId,
         img: string,
         tilePos: Vec2,
-        onInteract: (self: InteractibleShop) => void,
+        onInteract: (self: InteractibleUpgrader) => void,
     ) {
-        super(img, tilePos, () => false, (self) => onInteract(self as any as InteractibleShop))
+        super(img, tilePos, () => false, (self) => onInteract(self as any as InteractibleUpgrader))
     }
 
     override render(g: Graphics, pos: Vec2, isPlayerNearby: boolean): void {
         super.render(g, pos, isPlayerNearby);
         const pos2 = vec(-g.textWidth(this.id, { size: 5 }) / 2, -5);
+        g.renderText(this.id, pos.x + pos2.x + .25, pos.y + pos2.y + .25, { size: 5, color: DARK })
         g.renderText(this.id, pos.x + pos2.x, pos.y + pos2.y, { size: 5, color: WHITE })
     }
 }
@@ -76,7 +77,7 @@ export class InteractibleDoor extends Interactible {
         tilePos: Vec2,
         public onInteract: (self: Interactible) => void,
     ) {
-        super("door_gray2", tilePos, () => {
+        super("door", tilePos, () => {
             const quest = this.getQuest()
             return quest !== null && !quest.accepted;
         }, onInteract)

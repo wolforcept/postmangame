@@ -4,7 +4,7 @@ import { WHITE, ZOOM } from './consts';
 
 export interface DialogPart {
     text: () => string
-    skip?: () => boolean
+    // skip?: () => boolean
     options?: string[]
     callback?: (option: number) => void
 }
@@ -14,7 +14,7 @@ const MAX_INTERACT_CD = 160;
 export class Dialog {
     charsPerSecond = 30;
 
-    width = 800;
+    width = 950;
     height = 150;
     padding = 24;
 
@@ -38,7 +38,7 @@ export class Dialog {
         this.show([{ text: () => text }])
     }
 
-    show(parts: DialogPart[], onDone?: () => void): void {
+    show(parts: DialogPart[]): void {
         if (this.hasParts) {
             this.parts.splice(this.partIndex + 1, 0, ...parts);
             return;
@@ -50,15 +50,14 @@ export class Dialog {
         this.selectedOption = 0;
         this.interactCooldown = MAX_INTERACT_CD;
         this.lastOptionSelected = null;
-        // this.onDone = onDone;
     }
 
-    private skipParts(): void {
-        while (this.hasParts && this.parts[this.partIndex].skip?.()) this.goNext();
-    }
+    // private skipParts(): void {
+    //     while (this.hasParts && this.parts[this.partIndex].skip?.()) this.goNext();
+    // }
 
     update(g: Graphics, dt: number): void {
-        this.skipParts();
+        // this.skipParts();
         if (!this.hasParts) return;
 
         const part = this.parts[this.partIndex];
@@ -120,7 +119,7 @@ export class Dialog {
     }
 
     render(g: Graphics): void {
-        this.skipParts();
+        // this.skipParts();
         if (!this.hasParts) return;
 
         const part = this.parts[this.partIndex];

@@ -162,7 +162,9 @@ export class Menu {
     }
 
     renderInventory(g: Graphics, x: number, y: number) {
-        const text = "Wallet: " + this.data.money + " $\n\n" + "Items:\n" + this.data.inventory.map(x => " > " + x + "\n").join("");
+        const text = "Wallet: " + this.data.money + " $"
+            + "\n\nItems:\n" + this.data.inventory.map(x => " > " + x + "\n").join("")
+            + "\n\nUpgrades:\n" + this.data.upgrades.map(x => " > " + x + "\n").join("");
         g.renderText(text, x, y, { color: WHITE, size: 30 })
     }
 

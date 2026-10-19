@@ -16,19 +16,6 @@ const game = new Starter((assets: Assets) => {
         "patch",
         "hovered",
         "quest_marker",
-
-    ].forEach(img => assets.loadImage(img, img + ".png"));
-
-    [
-        "person2",
-        "money",
-        "post_door",
-        "door_gray2"
-
-    ].forEach(img => assets.loadImage("interactibles/" + img, "interactibles/" + img + ".png"));
-
-
-    [
         "person1",
         "person2",
         "person3",
@@ -39,16 +26,10 @@ const game = new Starter((assets: Assets) => {
         "person8",
         "person9",
         "person10",
-    ].forEach(img => assets.loadImage(img, "persons/" + img + ".png"));
+        "money",
+        "door"
 
-    // [
-    //     "pink",
-    //     "blue",
-    //     "gray",
-    //     "gray2",
-    //     "glass",
-
-    // ].forEach(img => assets.loadImage("door_" + img, "door_" + img + ".png"));
+    ].forEach(img => assets.loadImage(img, img + ".png"));
 
     return new GameScreen();
 });

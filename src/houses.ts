@@ -130,31 +130,31 @@ export const HOUSES: House[] = [
     { id: 88, residents: ["Miss Willa"],                                   /**/ nr: 9, pos: vec(257, 94) },
 ];
 
-function checkIds(items: { id: number }[]): void {
-    const counts = new Map<number, number>();
-    for (const { id } of items) {
-        counts.set(id, (counts.get(id) ?? 0) + 1);
-    }
+// function checkIds(items: { id: number }[]): void {
+//     const counts = new Map<number, number>();
+//     for (const { id } of items) {
+//         counts.set(id, (counts.get(id) ?? 0) + 1);
+//     }
 
-    const ids = [...counts.keys()];
-    const min = Math.min(...ids);
-    const max = Math.max(...ids);
+//     const ids = [...counts.keys()];
+//     const min = Math.min(...ids);
+//     const max = Math.max(...ids);
 
-    const missing: number[] = [];
-    for (let id = min; id <= max; id++) {
-        if (!counts.has(id)) missing.push(id);
-    }
+//     const missing: number[] = [];
+//     for (let id = min; id <= max; id++) {
+//         if (!counts.has(id)) missing.push(id);
+//     }
 
-    const duplicated = [...counts.entries()]
-        .filter(([, n]) => n > 1)
-        .map(([id, n]) => `${id} (x${n})`);
+//     const duplicated = [...counts.entries()]
+//         .filter(([, n]) => n > 1)
+//         .map(([id, n]) => `${id} (x${n})`);
 
-    console.log(`IDs from ${min} to ${max}`);
-    console.log('Missing:', missing.length ? missing.join(', ') : 'none');
-    console.log('Duplicated:', duplicated.length ? duplicated.join(', ') : 'none');
-}
+//     console.log(`IDs from ${min} to ${max}`);
+//     console.log('Missing:', missing.length ? missing.join(', ') : 'none');
+//     console.log('Duplicated:', duplicated.length ? duplicated.join(', ') : 'none');
+// }
 
-checkIds(HOUSES);
+// checkIds(HOUSES);
 
 export interface Street {
     difficulty: number | null

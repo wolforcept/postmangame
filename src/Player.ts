@@ -2,7 +2,7 @@ import { Graphics, Rect, vec, Vec2 } from 'miglib';
 import { Input } from './Input';
 import { World } from './World';
 import { BLOCKING } from './blocking';
-import { TILE_SIZE } from './consts';
+import { SHOE_UPGRADE_OPTIONS, TILE_SIZE } from './consts';
 import { Data } from './Data';
 
 type Dir = "up" | "down" | "left" | "right";
@@ -24,7 +24,13 @@ export class Player {
     isInCar = false
 
     get hitbox() { return this.isInCar ? new Rect(-4, -4, 14, 14) : new Rect(-2, 0, 4, 4) };
-    get speed() { return this.isInCar ? 100 : 40; }
+    get speed() {
+        if (this.isInCar) return 150
+        if (this.data.upgrades.includes(SHOE_UPGRADE_OPTIONS[2].name)) return 80
+        if (this.data.upgrades.includes(SHOE_UPGRADE_OPTIONS[1].name)) return 66
+        if (this.data.upgrades.includes(SHOE_UPGRADE_OPTIONS[0].name)) return 50
+        return 40;
+    }
     // get speed() { return 40; }
 
     constructor(private data: Data) {

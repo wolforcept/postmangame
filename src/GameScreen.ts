@@ -1,6 +1,6 @@
 import { Graphics, Keys, MigScreen, vec, Vec2 } from 'miglib';
 import { Camera } from './Camera';
-import { FONT, PLAYER_START, random, toggleDebug, WHITE, ZOOM } from './consts';
+import { FONT, PLAYER_START, random, SHOE_UPGRADE_OPTIONS, toggleDebug, UpgraderId, WHITE, ZOOM } from './consts';
 import { Data, Letter, Quest } from './Data';
 import { Dialog } from './Dialog';
 import { HOUSES } from './houses';
@@ -44,7 +44,7 @@ export class GameScreen implements MigScreen {
 
         this.world.init(g);
 
-        this.world.add(new Interactible("door_gray2", vec(39, 237), () => !this.data.hasJob, () => this.onPostDoor()));
+        this.world.add(new Interactible("door", vec(39, 237), () => !this.data.hasJob, () => this.onPostDoor()));
         this.world.add(new InteractibleShop("Toy Shop", vec(102, 252), (self) => this.onShop(self.id)));
         this.world.add(new InteractibleShop("Library", vec(118, 247), (self) => this.onShop(self.id)));
         this.world.add(new InteractibleShop("Hardware store", vec(49, 191), (self) => this.onShop(self.id)));
@@ -52,13 +52,14 @@ export class GameScreen implements MigScreen {
         this.world.add(new InteractibleShop("Groceries", vec(68, 205), (self) => this.onShop(self.id)));
 
         this.world.add(new InteractibleUpgrader("Used Cars", "person2", vec(79, 198), (self) => this.onUpgrader(self.id)));
+        this.world.add(new InteractibleUpgrader("Shoes", "person3", vec(105, 224), (self) => this.onUpgrader(self.id)));
+        this.world.add(new InteractibleUpgrader("School", "person4", vec(75, 265), (self) => this.onUpgrader(self.id)));
 
 
         for (const { id, amount, pos } of moneyss) {
             if (!this.data.caughtMoney.includes(id))
                 this.world.add(new Interactible("money", pos, () => true, (self) => {
                     this.data.caughtMoney.push(id)
-                    console.log(this.data.caughtMoney.length, moneyss.length)
                     if (this.data.caughtMoney.length < moneyss.length)
                         this.dialog.showEasy("Found " + amount + "$")
                     else
@@ -89,21 +90,69 @@ export class GameScreen implements MigScreen {
         localStorage.setItem("postmangame", JSON.stringify(this.data))
     }
 
+    // load(): Data {
+    //     const loaded = this.tryLoad() as any;
+    //     const newData = {
+    //         money: 0,
+    //         knowledge: 0,
+    //         daysPassed: 0,
+    //         playerX: PLAYER_START.x,
+    //         playerY: PLAYER_START.y,
+    //         promotion: 0,
+    //         inventory: [],
+    //         caughtMoney: [],
+    //         letters: [],
+    //         quests: [],
+    //         upgrades: [],
+    //         hasJob: false,
+    //         learnedToday: false,
+    //     }
+    //     if (loaded.money &&         /**/ typeof loaded.money             /**/ === "number")  /**/ newData.money          /**/ = loaded.money
+    //     if (loaded.knowledge &&     /**/ typeof loaded.knowledge         /**/ === "number")  /**/ newData.knowledge      /**/ = loaded.knowledge
+    //     if (loaded.daysPassed &&    /**/ typeof loaded.daysPassed        /**/ === "number")  /**/ newData.daysPassed     /**/ = loaded.daysPassed
+    //     if (loaded.playerX &&       /**/ typeof loaded.playerX           /**/ === "number")  /**/ newData.playerX        /**/ = loaded.playerX
+    //     if (loaded.playerY &&       /**/ typeof loaded.playerY           /**/ === "number")  /**/ newData.playerY        /**/ = loaded.playerY
+    //     if (loaded.promotion &&     /**/ typeof loaded.promotion         /**/ === "number")  /**/ newData.promotion      /**/ = loaded.promotion
+    //     if (loaded.inventory && loaded.inventory.length)                                     /**/ newData.inventory      /**/ = loaded.inventory
+    //     if (loaded.caughtMoney && loaded.caughtMoney.length)                                 /**/ newData.caughtMoney    /**/ = loaded.caughtMoney
+    //     if (loaded.letters && loaded.letters.length)                                         /**/ newData.letters        /**/ = loaded.letters
+    //     if (loaded.quests && loaded.quests.length)                                           /**/ newData.quests         /**/ = loaded.quests
+    //     if (loaded.upgrades && loaded.upgrades.length)                                       /**/newData.upgrades       /**/ = loaded.upgrades
+    //     if (typeof loaded.hasJob === "boolean")                                              /**/ newData.hasJob         /**/ = loaded.hasJob
+    //     if (typeof loaded.learnedToday === "boolean")                                        /**/ newData.learnedToday   /**/ = loaded.learnedToday
+    //     return newData;
+    // }
     load(): Data {
-        const loaded = this.tryLoad();
-        if (loaded) return loaded;
+        const init = this.makeInit(this.tryLoad());
         return {
-            money: 0,
-            inventory: [],
-            caughtMoney: [],
-            letters: [],
-            quests: [],
-            daysPassed: 0,
-            hasJob: false,
-            playerX: PLAYER_START.x,
-            playerY: PLAYER_START.y,
-            upgrades: [],
-        }
+            money: init("money", 0),
+            knowledge: init("knowledge", 0),
+            daysPassed: init("daysPassed", 0),
+            playerX: init("playerX", PLAYER_START.x),
+            playerY: init("playerY", PLAYER_START.y),
+            promotion: init("promotion", 0),
+            inventory: init("inventory", []),
+            caughtMoney: init("caughtMoney", []),
+            letters: init("letters", []),
+            quests: init("quests", []),
+            upgrades: init("upgrades", []),
+            hasJob: init("hasJob", false),
+            learnedToday: init("learnedToday", false),
+        };
+    }
+
+    makeInit(saved: unknown) {
+        const src = (saved && typeof saved === "object" ? saved : {}) as Record<string, unknown>;
+
+        /** Returns the saved value if it exists and has the right type, otherwise the default. */
+        return function init<K extends keyof Data>(key: K, fallback: Data[K]): Data[K] {
+            const v = src[key];
+            const valid =
+                Array.isArray(fallback) ? Array.isArray(v) :
+                    typeof fallback === "number" ? typeof v === "number" && Number.isFinite(v) :
+                        typeof v === typeof fallback;
+            return valid ? (v as Data[K]) : fallback;
+        };
     }
 
     tryLoad(): Data | null {
@@ -143,11 +192,12 @@ export class GameScreen implements MigScreen {
         }])
     }
 
-    onUpgrader(id: string) {
+    onUpgrader(id: UpgraderId) {
 
         const dialog = this.dialog;
 
         switch (id) {
+
             case "Used Cars": {
 
                 if (this.data.upgrades.includes("car"))
@@ -169,9 +219,65 @@ export class GameScreen implements MigScreen {
                     }
                 }]);
             }
+
+            case "Shoes": {
+
+                const opts = SHOE_UPGRADE_OPTIONS;
+                return dialog.show([{
+                    text: () => "We have the best running shoes!",
+                    options: ["cancel", ...opts.map(x => x.name + " " + x.price + "$")],
+                    callback: (_opt) => {
+                        if (_opt === 0) return;
+                        const opt = opts[_opt - 1];
+                        if (this.data.upgrades.includes(opt.name))
+                            dialog.showEasy("You already own this.")
+                        else {
+                            if (this.data.money >= opt.price) {
+                                dialog.showEasy("You purchased " + opt.name + " for " + opt.price + "$.")
+                                this.data.money -= opt.price
+                                this.data.upgrades.push(opt.name)
+                            } else {
+                                dialog.showEasy("Not enough money.")
+                            }
+                        }
+                    }
+                }]);
+            }
+
+
+            case "School": {
+
+                if (this.data.learnedToday)
+                    return dialog.showEasy("Only once per day!")
+
+                if (this.data.upgrades.includes("school")) {
+                    this.data.learnedToday = true;
+                    this.data.knowledge++;
+                    return dialog.show([{ text: () => "Your knowledge increased to " + this.data.knowledge }])
+                }
+                return dialog.show([{
+                    text: () => "Would you like to sign up for our lessons? Only 100$. Each lesson increases your chance to be promoted!",
+                    options: ["no", "yes"],
+                    callback: (_opt) => {
+                        if (_opt === 0) return;
+                        if (this.data.money >= 100) {
+                            this.data.knowledge++;
+                            this.data.learnedToday = true;
+                            dialog.show([
+                                { text: () => "You signed up for school lessons for 100$." },
+                                { text: () => "Your knowledge increased to " + this.data.knowledge },
+                                { text: () => "Come back every day to increase your knowledge" },
+                            ])
+                            this.data.money -= 100
+                            this.data.upgrades.push("school")
+                        } else {
+                            dialog.showEasy("Not enough money.")
+                        }
+                    }
+                }]);
+            }
+
         }
-
-
     }
 
     onPostDoor() {
@@ -189,28 +295,23 @@ export class GameScreen implements MigScreen {
                 },
                 { text: () => this.data.hasJob ? "Ok now i need to deliver all these letters. (press Q to view letters)" : "I really need a job..." }
             ],
-            () => console.log('Dialog A done'),
         )
 
+        if (this.hasLetters)
+            return this.dialog.showEasy("I have not delivered all letters yet.");
+
         return this.dialog.show([
-            {
-                skip: () => !this.hasLetters,
-                text: () => "I have not delivered all letters yet."
-            },
 
             {
-                skip: () => this.hasLetters,
                 text: () => 'End work day?', options: ["yes", "not yet"], callback: (option: number) => {
                     if (option !== 0) return;
                     this.beginDay();
+                    this.dialog.show([{
+                        text: () => "Day " + this.data.daysPassed + "\n" + "Letters to deliver: " + this.data.letters.length
+                    }])
                 }
             },
-
-            {
-                skip: () => this.dialog.lastOptionSelected !== 0 || !this.hasLetters,
-                text: () => "Day " + this.data.daysPassed + "\n" + "Letters to deliver: " + this.data.letters.length
-            }
-        ], () => console.log("test"))
+        ])
     }
 
     deliver(_id: number) {
@@ -223,7 +324,6 @@ export class GameScreen implements MigScreen {
         for (const _quest of this.data.quests)
             if (_quest.houseId === id) quest = _quest;
 
-        console.log(quest)
         if (letter === null && quest === null) {
             this.dialog.showEasy("I have nothing to deliver here...")
             return;
@@ -265,6 +365,7 @@ export class GameScreen implements MigScreen {
         this.data.money += 25;
         this.data.daysPassed++;
         this.data.letters = this.letterGen.genLetters();
+        this.data.learnedToday = false;
         this.addRandomQuest();
         this.save();
     }
@@ -277,7 +378,6 @@ export class GameScreen implements MigScreen {
         const quest = genQuest(this.data);
         if (quest !== null)
             this.data.quests.push(quest)
-        console.log(this.data)
     }
 
     onUpdate(g: Graphics): void {
@@ -321,7 +421,7 @@ export class GameScreen implements MigScreen {
     }
 
     onRender(g: Graphics): void {
-        if (Keys.justPressed(Keys.KEY_F10)) toggleDebug()
+        if (Keys.justPressed(Keys.KEY_F10)) this.player.pos.set(PLAYER_START.x, PLAYER_START.y);// toggleDebug()
         if (Keys.justPressed(Keys.KEY_F9)) this.clearSave()
 
         g.sketch.background(0);
